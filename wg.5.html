@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة إرث - المشاريع المتخصصة</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* استدعاء الخطوط */
+        @font-face { font-family: 'Myriad Arabic'; src: url('Myriad.ttf') format('truetype'); font-display: swap; }
+        @font-face { font-family: 'DecoType Naskh'; src: url('Naskh.ttf') format('truetype'); font-display: swap; }
+
+        /* ==================================================
+           الوضع الأسود الافتراضي
+           ================================================== */
+        :root {
+            --primary-red: #9C302F; 
+            --primary-olive: #566B30; 
+            --primary-sand: #D2B48C; 
+            --dark-base: #0a0a0a; 
+            --dark-surface: #141414;
+            --bright-yellow: #FCCE0D; 
+            --warm-orange: #EE6B3A;
+            --tech-blue: #2C6691;
+            
+            --bg-main: var(--dark-base);
+            --bg-card: var(--dark-surface);
+            --text-color: var(--primary-sand);
+            --text-muted: #888;
+            --header-bg: rgba(10, 10, 10, 0.95);
+            --border-line: rgba(210, 180, 140, 0.15);
+            --stars-color: rgba(252, 206, 13, 0.15); 
+            
+            --font-main: 'Myriad Arabic', sans-serif;
+            --font-secondary: 'DecoType Naskh', serif;
+        }
+
+        /* ==================================================
+           الوضع النهاري
+           ================================================== */
+        body.light-mode {
+            --bg-main: #F5EBE0; 
+            --bg-card: #EADBC8; 
+            --text-color: #3A2D1F; 
+            --text-muted: #5C4D3C; 
+            --header-bg: rgba(245, 235, 224, 0.95);
+            --border-line: rgba(156, 48, 47, 0.2);
+            --stars-color: rgba(156, 48, 47, 0.15); 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; cursor: none !important; transition: background-color 0.4s ease, color 0.4s ease; }
+        body { font-family: var(--font-main); background-color: var(--bg-main); color: var(--text-color); overflow-x: hidden; position: relative; }
+
+        /* حركة النجوم الخلفية */
+        .animated-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none;
+            background-image: radial-gradient(circle, var(--stars-color) 2px, transparent 2px), radial-gradient(circle, var(--stars-color) 1px, transparent 1px);
+            background-size: 60px 60px, 100px 100px; background-position: 0 0, 30px 30px;
+            animation: moveStars 40s linear infinite;
+        }
+        @keyframes moveStars { 0% { transform: translateY(0); } 100% { transform: translateY(-100px) translateX(-50px); } }
+
+        /* الهيدر الثابت */
+        .veo-navigation { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: var(--header-bg); backdrop-filter: blur(15px); transition: all 0.4s ease; display: flex; flex-direction: column; }
+        .nav-top-row { display: flex; justify-content: space-between; align-items: center; height: 80px; padding: 0 50px; width: 100%; position: relative; }
+        .logo-and-controls { position: absolute; right: 50px; display: flex; align-items: center; gap: 30px; height: 100%; }
+
+        @keyframes premiumFloat { 0% { transform: translateY(0px); filter: drop-shadow(0 0 0px rgba(252, 206, 13, 0)); } 50% { transform: translateY(-4px); filter: drop-shadow(0 10px 15px rgba(252, 206, 13, 0.6)); } 100% { transform: translateY(0px); filter: drop-shadow(0 0 0px rgba(252, 206, 13, 0)); } }
+        .logo-container { display: flex; align-items: center; height: 100%; }
+        .logo-container img { height: 50px; object-fit: contain; animation: premiumFloat 4s ease-in-out infinite; } 
+
+        .nav-controls { display: flex; gap: 8px; align-items: center; }
+        .action-btn { background: rgba(210, 180, 140, 0.05); border: 1px solid rgba(210, 180, 140, 0.3); color: var(--primary-sand); width: 28px; height: 28px; border-radius: 6px; font-size: 11px; font-weight: bold; display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
+        .action-btn:hover { background: var(--primary-sand); color: var(--dark-base); }
+        body.light-mode .action-btn { border-color: var(--primary-red); color: var(--primary-red); }
+        body.light-mode .action-btn:hover { background: var(--primary-red); color: var(--bg-main); }
+
+        @keyframes moveGradientLoop { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        .logo-extended-line { position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--primary-red), var(--warm-orange), var(--bright-yellow), var(--warm-orange), var(--primary-red)); background-size: 200% 100%; animation: moveGradientLoop 3s linear infinite; }
+
+        .nav-bottom-row { display: flex; justify-content: center; align-items: center; height: 55px; width: 100%; background: rgba(0, 0, 0, 0.1); }
+        .nav-menu-links { display: flex; list-style: none; gap: 50px; margin: 0; padding: 0; }
+        .nav-menu-links a { color: var(--text-color); text-decoration: none; font-size: 18px; font-weight: 600; position: relative; padding-bottom: 5px; letter-spacing: 1px; }
+        .nav-menu-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--bright-yellow); transition: width 0.3s ease; }
+        .nav-menu-links a:hover, .nav-menu-links a.active { color: var(--bright-yellow); }
+        .nav-menu-links a:hover::after, .nav-menu-links a.active::after { width: 100%; }
+
+        /* النوافذ العائمة */
+        .fixed-location { position: fixed; top: 20px; left: 20px; background: var(--bright-yellow); color: #111; padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 700; z-index: 99999; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(252, 206, 13, 0.3); }
+        .fixed-location i { color: var(--primary-red); font-size: 16px; }
+        .action-buttons { position: fixed; top: 65px; left: 20px; z-index: 99999; display: flex; gap: 8px; }
+        #discount-popup { position: fixed; left: 20px; top: 110px; background: var(--bright-yellow); color: #333; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; z-index: 99999; box-shadow: 0 10px 30px rgba(0,0,0,.25); font-weight: 700; font-size: 14px; }
+        #discount-popup button { border: none; background: none; font-size: 18px; cursor: none; color: #333; font-weight: bold; }
+
+        /* ==================================================
+           النص العاطفي (Emotional Intro)
+           ================================================== */
+        .emotional-header { text-align: center; padding: 220px 10% 80px; max-width: 1000px; margin: 0 auto; }
+        .emotional-header h1 { color: var(--primary-red); font-size: 52px; margin-bottom: 25px; font-weight: 700; line-height: 1.2; }
+        body.light-mode .emotional-header h1 { color: var(--primary-red); }
+        
+        .emotional-text { 
+            color: var(--text-color); font-size: 26px; font-family: var(--font-secondary); 
+            line-height: 2; margin-bottom: 40px; text-align: justify; text-align-last: center;
+        }
+        body.light-mode .emotional-text { color: var(--text-muted); }
+        
+        .quote-box {
+            position: relative; padding: 40px; background: rgba(210, 180, 140, 0.05);
+            border-right: 4px solid var(--bright-yellow); border-left: 4px solid var(--bright-yellow);
+            border-radius: 12px; margin-top: 40px; font-size: 22px; font-style: italic; color: var(--bright-yellow);
+        }
+        body.light-mode .quote-box { background: rgba(156, 48, 47, 0.05); color: var(--primary-red); border-color: var(--primary-red); }
+
+        /* ==================================================
+           نموذج طلب ذكرى (Memory Pitch Form)
+           ================================================== */
+        .pitch-section { padding: 40px 10% 120px; }
+        .pitch-container { 
+            max-width: 900px; margin: 0 auto; background: var(--bg-card); 
+            border: 1px solid var(--border-line); border-radius: 24px; padding: 60px; 
+            box-shadow: 0 20px 50px var(--shadow-color); 
+        }
+        
+        .pitch-title { text-align: center; color: var(--bright-yellow); font-size: 32px; margin-bottom: 40px; font-weight: bold; }
+        body.light-mode .pitch-title { color: var(--text-main); }
+        
+        .pitch-form-grid { display: grid; grid-template-columns: 1fr; gap: 30px; text-align: right; }
+        body[dir="ltr"] .pitch-form-grid { text-align: left; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 12px; }
+        
+        .form-group label { color: var(--primary-sand); font-size: 18px; font-weight: bold; }
+        body.light-mode .form-group label { color: var(--text-main); }
+        
+        .form-group input, .form-group textarea {
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border-line); padding: 20px; border-radius: 12px;
+            color: var(--text-color); font-family: var(--font-main); font-size: 18px; transition: all 0.3s;
+            line-height: 1.6;
+        }
+        body.light-mode .form-group input, body.light-mode .form-group textarea { background: #fff; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--bright-yellow); box-shadow: 0 0 10px rgba(252, 206, 13, 0.2); }
+
+        .file-upload-box {
+            border: 2px dashed var(--border-line); padding: 40px 20px; border-radius: 12px; text-align: center;
+            transition: all 0.3s; cursor: none; background: rgba(0,0,0,0.1);
+        }
+        body.light-mode .file-upload-box { background: rgba(255,255,255,0.5); }
+        .file-upload-box:hover { border-color: var(--bright-yellow); background: rgba(252, 206, 13, 0.05); }
+        .file-upload-box i { font-size: 40px; color: var(--primary-sand); margin-bottom: 15px; }
+        .file-upload-box input { display: none; }
+        .file-upload-box span { font-size: 18px; color: var(--text-muted); display: block; margin-top: 10px;}
+        
+        .submit-pitch-btn {
+            background: var(--primary-red); color: #fff; border: none; padding: 20px; border-radius: 12px;
+            font-size: 22px; font-weight: bold; width: 100%; transition: all 0.3s; margin-top: 10px; cursor: none;
+        }
+        .submit-pitch-btn:hover { background: var(--bright-yellow); color: var(--dark-base); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(252, 206, 13, 0.3); }
+
+        /* الفوتر */
+        .footer-section { padding: 80px 10% 30px; background: #050505; border-top: 1px solid var(--border-line); }
+        body.light-mode .footer-section { background: var(--bg-card); }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; margin-bottom: 50px; text-align: right; }
+        body[dir="ltr"] .footer-content { text-align: left; }
+        .footer-col { flex: 1; min-width: 250px; }
+        .footer-col h3 { color: var(--bright-yellow); font-size: 24px; margin-bottom: 25px; }
+        .footer-col p, .footer-col a { color: var(--text-color); font-family: var(--font-secondary); font-size: 18px; text-decoration: none; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .footer-col a:hover { color: var(--primary-red); }
+        .footer-col i { color: var(--primary-red); font-size: 20px; width: 25px; text-align: center; }
+        .footer-bottom { text-align: center; padding-top: 25px; border-top: 1px solid rgba(210,180,140,0.1); }
+        .footer-bottom p { color: var(--text-muted); font-size: 16px; letter-spacing: 1px; }
+
+        /* AI Chat */
+        .ai-chat-widget { position: fixed; bottom: 40px; left: 40px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-start; }
+        .ai-chat-button { width: 70px; height: 70px; border-radius: 50%; background: #0a0a0a; border: 2px solid var(--primary-red); box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; color: var(--primary-sand); font-size: 28px; cursor: none; }
+        body.light-mode .ai-chat-button { background: var(--bg-card); }
+        .ai-chat-button:hover { transform: scale(1.1); border-color: var(--bright-yellow); color: var(--bright-yellow); box-shadow: 0 10px 30px rgba(252, 206, 13, 0.4); }
+        .ai-chat-window { width: 340px; height: 450px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--primary-red); border-radius: 16px; margin-bottom: 15px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
+        .ai-chat-header { background: var(--primary-red); color: #fff; padding: 15px; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .ai-chat-header-info { display: flex; align-items: center; gap: 10px; }
+        .ai-chat-header-info i { font-size: 24px; color: var(--bright-yellow); }
+        .ai-chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 15px; background: #141414;}
+        .msg-bot { background: rgba(210, 180, 140, 0.1); color: var(--primary-sand); padding: 10px 15px; border-radius: 12px; align-self: flex-start; max-width: 85%; border-right: 3px solid var(--primary-red); }
+        .msg-user { background: var(--primary-olive); color: #fff; padding: 10px 15px; border-radius: 12px; align-self: flex-end; max-width: 85%; }
+        .ai-chat-input-area { display: flex; border-top: 1px solid rgba(210, 180, 140, 0.2); background: rgba(10, 10, 10, 0.9); padding: 5px; }
+        .ai-chat-input-area input { flex: 1; background: transparent; border: none; padding: 12px 15px; color: var(--primary-sand); font-family: var(--font-main); font-size: 15px; outline: none; }
+        .ai-chat-send { background: transparent; border: none; color: var(--bright-yellow); padding: 0 15px; font-size: 20px; transition: transform 0.2s; cursor: none; }
+        .ai-chat-send:hover { transform: scale(1.1); }
+
+        /* الماوس */
+        .custom-cursor { width: 30px; height: 30px; border: 1px solid var(--primary-red); border-radius: 50%; position: fixed; transform: translate(-50%, -50%); pointer-events: none; z-index: 10000; transition: width 0.2s, height 0.2s; }
+        .custom-cursor-dot { width: 4px; height: 4px; background-color: var(--bright-yellow); border-radius: 50%; position: fixed; transform: translate(-50%, -50%); pointer-events: none; z-index: 10000; }
+        a:hover ~ .custom-cursor, button:hover ~ .custom-cursor, label:hover ~ .custom-cursor { width: 60px; height: 60px; background: rgba(156, 48, 47, 0.1); border-color: transparent; }
+    </style>
+</head>
+<body>
+
+    <div class="animated-bg"></div>
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-dot"></div>
+
+    <nav class="veo-navigation">
+        <div class="nav-top-row">
+            <div class="logo-and-controls">
+                <div class="logo-container">
+                    <img src="logo.png" alt="إرث">
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-bottom-row">
+            <ul class="nav-menu-links">
+                <li><a href="wg.1.html" data-ar="الرئيسية" data-en="Home">الرئيسية</a></li>
+                <li><a href="wg.2.html" data-ar="التجارب" data-en="Experiences">التجارب</a></li>
+                <li><a href="wg.3.html" data-ar="عمل المنصة" data-en="How it Works">عمل المنصة</a></li>
+                <li><a href="wg.4.html" data-ar="تذكار" data-en="Souvenirs">تذكار</a></li>
+                <li><a href="wg.5.html" class="active" data-ar="المشاريع المتخصصة" data-en="Custom Projects">المشاريع المتخصصة</a></li>
+                <li><a href="wg.6.html" data-ar="الحجز" data-en="Booking">الحجز</a></li>
+            </ul>
+        </div>
+        <div class="logo-extended-line"></div>
+    </nav>
+
+    <div class="fixed-location">
+        <i class="fa-solid fa-location-dot"></i>
+        <span data-ar="أم قيس" data-en="Umm Qais">أم قيس</span>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-btn" onclick="toggleLanguage()" id="lang-btn">EN</button>
+        <button class="action-btn" onclick="toggleTheme()" title="تبديل ليلي/نهاري">
+            <i class="fa-solid fa-sun" id="theme-icon"></i>
+        </button>
+    </div>
+
+    <div id="discount-popup">
+        <i class="fa-solid fa-tag"></i>
+        <span data-ar="خصم حصري 25% | التذكرة تبدأ من 5 د.أ فقط" data-en="25% OFF | Tickets start at 5 JOD">خصم حصري 25% | التذكرة تبدأ من 5 د.أ فقط</span>
+        <button onclick="document.getElementById('discount-popup').style.display='none'">✕</button>
+    </div>
+
+    <section class="emotional-header">
+        <h1 data-ar="سافر عبر الزمن.. إلى حيث تشتاق" data-en="Time Travel.. To Where You Long To Be">سافر عبر الزمن.. إلى حيث تشتاق</h1>
+        <p class="emotional-text" data-ar="الذكريات ليست مجرد صور باهتة في ألبوم قديم، بل هي حياة كاملة يمكننا إعادة بنائها. هل تفتقد بيت العائلة القديم؟ أو حياً قديماً تغيرت ملامحه؟ نحن في منصة إرث نستخدم تقنيات الواقع الافتراضي لنبني لك عالمك الخاص، لتعود إليه متى شئت وكأنك لم تغادره يوماً." data-en="Memories are not just faded photos in an old album, they are a whole life we can rebuild. Do you miss your old family home? Or an old neighborhood that has changed? At Erth, we use VR technologies to build your own world, so you can return to it whenever you want as if you never left.">
+            الذكريات ليست مجرد صور باهتة في ألبوم قديم، بل هي حياة كاملة يمكننا إعادة بنائها. هل تفتقد بيت العائلة القديم؟ أو حياً قديماً تغيرت ملامحه؟ نحن في منصة إرث نستخدم تقنيات الواقع الافتراضي لنبني لك عالمك الخاص، لتعود إليه متى شئت وكأنك لم تغادره يوماً.
+        </p>
+        <div class="quote-box" data-ar="«أخبرنا عن ذكراك.. ودعنا نبني لك طريقاً لتعيشها من جديد»" data-en="«Tell us your memory.. and let us build a path for you to live it again»">
+            «أخبرنا عن ذكراك.. ودعنا نبني لك طريقاً لتعيشها من جديد»
+        </div>
+    </section>
+
+    <section class="pitch-section">
+        <div class="pitch-container">
+            <h2 class="pitch-title" data-ar="شاركنا تفاصيل ذكراك" data-en="Share Your Memory Details">شاركنا تفاصيل ذكراك</h2>
+            
+            <form class="pitch-form-grid" onsubmit="event.preventDefault(); alert('تم استلام رسالتك بحب! سنتواصل معك قريباً لنبدأ رحلة البناء.');">
+                
+                <div class="form-group">
+                    <label data-ar="الاسم الكامل" data-en="Full Name">الاسم الكامل</label>
+                    <input type="text" placeholder="أخبرنا باسمك لنعرف كيف نخاطبك..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label data-ar="رقم التواصل أو البريد الإلكتروني" data-en="Contact Number or Email">رقم التواصل أو البريد الإلكتروني</label>
+                    <input type="text" required>
+                </div>
+
+                <div class="form-group">
+                    <label data-ar="حدثنا عن الذكرى أو المكان الذي تود العودة إليه" data-en="Tell us about the memory or place you want to return to">حدثنا عن الذكرى أو المكان الذي تود العودة إليه</label>
+                    <textarea rows="4" placeholder="مثال: بيت جدي القديم في إربد، الحوش الواسع، شجرة الليمون..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label data-ar="تفاصيل عالقة في ذهنك (ألوان، أصوات، ملامح)" data-en="Details stuck in your mind (Colors, Sounds, Features)">تفاصيل عالقة في ذهنك (ألوان، أصوات، ملامح)</label>
+                    <textarea rows="4" placeholder="كلما ذكرت تفاصيل أكثر، استطعنا بناء عالمك بدقة أكبر..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label data-ar="المرفقات (صور قديمة، فيديوهات، أو حتى رسمة بسيطة)" data-en="Attachments (Old photos, videos, or even a simple sketch)">المرفقات (صور قديمة، فيديوهات، أو حتى رسمة بسيطة)</label>
+                    <div class="file-upload-box">
+                        <label for="memory-files" style="cursor: pointer;">
+                            <i class="fa-solid fa-images"></i>
+                            <span data-ar="اضغط هنا لرفع صور أو مقاطع للذكرى" data-en="Click here to upload photos or clips of the memory">اضغط هنا لرفع صور أو مقاطع للذكرى</span>
+                            <span style="font-size: 14px; font-weight: normal; margin-top: 5px;" data-ar="ستساعدنا هذه الصور في تجسيد المكان بواقعية" data-en="These photos will help us embody the place realistically">ستساعدنا هذه الصور في تجسيد المكان بواقعية</span>
+                        </label>
+                        <input type="file" id="memory-files" multiple>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="submit-pitch-btn" data-ar="أرسل ذكرياتك لنبدأ البناء" data-en="Send your memories to start building">أرسل ذكرياتك لنبدأ البناء</button>
+                </div>
+
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer-section">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3 data-ar="عن إرث" data-en="About Erth">عن إرث</h3>
+                <p data-ar="منصة تهدف الى احياء الارث الاردني." data-en="A digital platform aiming to revive Jordanian architectural heritage.">منصة رقمية تهدف إلى إحياء التراث المعماري الأردني.</p>
+            </div>
+            <div class="footer-col">
+                <h3 data-ar="معلومات التواصل" data-en="Contact Info">معلومات التواصل</h3>
+                <p><i class="fa-solid fa-phone"></i> +962 773457893</p>
+                <p><i class="fa-solid fa-envelope"></i> info@erth.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-ar="جميع الحقوق محفوظة لـ هبه الشرمان © 2026" data-en="All Rights Reserved to Heba Al-Sharman © 2026">جميع الحقوق محفوظة لـ هبه الشرمان © 2026</p>
+        </div>
+    </footer>
+
+    <div class="ai-chat-widget">
+        <div class="ai-chat-window" id="chatWindow">
+            <div class="ai-chat-header">
+                <div class="ai-chat-header-info">
+                    <i class="fa-solid fa-robot"></i>
+                    <span data-ar="مساعد إرث (نشمي الذكي)" data-en="Erth Assistant (Smart Nashmi)">مساعد إرث (نشمي الذكي)</span>
+                </div>
+                <i class="fa-solid fa-xmark" style="cursor:none;" onclick="toggleChat()"></i>
+            </div>
+            <div class="ai-chat-messages" id="chatMessages">
+                <div class="msg-bot" data-ar="يا هلا بيك! شاركني المكان اللي مشتاق له، ورح أساعدك نرتب كيف نرجع نبنيه." data-en="Welcome! Share the place you miss, and I'll help you arrange how to rebuild it.">يا هلا بيك! شاركني المكان اللي مشتاق له، ورح أساعدك نرتب كيف نرجع نبنيه.</div>
+            </div>
+            <div class="ai-chat-input-area">
+                <input type="text" id="chatInput" placeholder="اكتب سؤالك هنا..." onkeypress="handleChatKey(event)">
+                <button class="ai-chat-send" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button class="ai-chat-button" onclick="toggleChat()">
+            <i class="fa-solid fa-robot"></i>
+        </button>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('theme-icon');
+            if(document.body.classList.contains('light-mode')) {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        }
+
+        let currentLang = 'ar';
+        function toggleLanguage() {
+            const htmlTag = document.documentElement;
+            const langBtn = document.getElementById('lang-btn');
+            const translatableElements = document.querySelectorAll('[data-ar]');
+
+            if (currentLang === 'ar') {
+                currentLang = 'en';
+                htmlTag.setAttribute('dir', 'ltr'); 
+                htmlTag.setAttribute('lang', 'en');
+                langBtn.innerText = 'AR';
+                
+                translatableElements.forEach(el => { el.innerHTML = el.getAttribute('data-en'); });
+                document.getElementById('chatInput').placeholder = "Type your question here...";
+            } else {
+                currentLang = 'ar';
+                htmlTag.setAttribute('dir', 'rtl'); 
+                htmlTag.setAttribute('lang', 'ar');
+                langBtn.innerText = 'EN';
+                
+                translatableElements.forEach(el => { el.innerHTML = el.getAttribute('data-ar'); });
+                document.getElementById('chatInput').placeholder = "اكتب سؤالك هنا...";
+            }
+        }
+
+        function toggleChat() {
+            const windowEl = document.getElementById('chatWindow');
+            windowEl.style.display = (windowEl.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const messagesContainer = document.getElementById('chatMessages');
+            if(input.value.trim() === "") return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg-user';
+            userMsg.innerText = input.value;
+            messagesContainer.appendChild(userMsg);
+
+            const userText = input.value;
+            input.value = "";
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg-bot';
+                let replyMsg = currentLang === 'ar' ? "عم أتخيل معك المكان.. بخصوص '" : "I am imagining the place with you.. regarding '";
+                botMsg.innerText = replyMsg + userText + "'، شو أكثر إشي مميز فيه؟";
+                messagesContainer.appendChild(botMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 800);
+        }
+
+        function handleChatKey(event) {
+            if(event.key === 'Enter') sendChatMessage();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursor = document.querySelector('.custom-cursor');
+            const cursorDot = document.querySelector('.custom-cursor-dot');
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+                cursorDot.style.left = e.clientX + 'px'; cursorDot.style.top = e.clientY + 'px';
+            });
+        });
+    </script>
+</body>
+</html>
