@@ -1,0 +1,478 @@
+ختامها مسك! وصلنا للصفحة السادسة والأخيرة: **"الحجز" (`wg.6.html`)**.
+
+بما أن هاي الصفحة هي "نقطة التحويل" (Conversion Point) اللي الزائر بيدفع وبأكد فيها حجز تجربته، لازم تكون مصممة بحيث تعطي شعور بالثقة، الفخامة، والوضوح السريع.
+
+**شو عملت بهاي الصفحة؟**
+
+1. **نموذج حجز فخم جداً (Luxury Booking Form):** صممته ليكون عبارة عن بطاقة أنيقة بتطلب المعلومات الأساسية (الاسم، التجربة المطلوبة، التاريخ، الوقت، وعدد التذاكر).
+2. **ملخص الدفع الحي (Live Price Summary):** ضفت صندوق جانبي صغير جوا الفورم بيذكر الزائر بالخصم (25%) وبسعر التذكرة المخفض (5 دنانير) عشان يشجعه يكمل الحجز بسرعة.
+3. **الماستر تمبلت:** حافظت على كل الأساسيات اللي تعبنا عليها (الوضع الليلي/النهاري، الترجمة، النجوم المتحركة، الخط الممتد، الشات الذكي).
+
+افتح ملف جديد باسم `wg.6.html` وانسخ هذا الكود النهائي لختام المشروع:
+
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة إرث - الحجز</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* استدعاء الخطوط */
+        @font-face { font-family: 'Myriad Arabic'; src: url('Myriad.ttf') format('truetype'); font-display: swap; }
+        @font-face { font-family: 'DecoType Naskh'; src: url('Naskh.ttf') format('truetype'); font-display: swap; }
+
+        /* ==================================================
+           الوضع الأسود الافتراضي (السينمائي)
+           ================================================== */
+        :root {
+            --primary-red: #9C302F; 
+            --primary-olive: #566B30; 
+            --primary-sand: #D2B48C; 
+            --dark-base: #0a0a0a; 
+            --dark-surface: #141414;
+            --bright-yellow: #FCCE0D; 
+            --warm-orange: #EE6B3A;
+            --tech-blue: #2C6691;
+            
+            --bg-main: var(--dark-base);
+            --bg-card: var(--dark-surface);
+            --text-color: var(--primary-sand);
+            --text-muted: #888;
+            --header-bg: rgba(10, 10, 10, 0.95);
+            --border-line: rgba(210, 180, 140, 0.15);
+            --stars-color: rgba(252, 206, 13, 0.15); 
+            
+            --font-main: 'Myriad Arabic', sans-serif;
+            --font-secondary: 'DecoType Naskh', serif;
+        }
+
+        /* ==================================================
+           الوضع النهاري (بيج)
+           ================================================== */
+        body.light-mode {
+            --bg-main: #F5EBE0; 
+            --bg-card: #EADBC8; 
+            --text-color: #3A2D1F; 
+            --text-muted: #5C4D3C; 
+            --header-bg: rgba(245, 235, 224, 0.95);
+            --border-line: rgba(156, 48, 47, 0.2);
+            --stars-color: rgba(156, 48, 47, 0.15); 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; cursor: none !important; transition: background-color 0.4s ease, color 0.4s ease; }
+        body { font-family: var(--font-main); background-color: var(--bg-main); color: var(--text-color); overflow-x: hidden; position: relative; }
+
+        /* حركة النجوم الخلفية */
+        .animated-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none;
+            background-image: radial-gradient(circle, var(--stars-color) 2px, transparent 2px), radial-gradient(circle, var(--stars-color) 1px, transparent 1px);
+            background-size: 60px 60px, 100px 100px; background-position: 0 0, 30px 30px;
+            animation: moveStars 40s linear infinite;
+        }
+        @keyframes moveStars { 0% { transform: translateY(0); } 100% { transform: translateY(-100px) translateX(-50px); } }
+
+        /* الهيدر الثابت */
+        .veo-navigation { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: var(--header-bg); backdrop-filter: blur(15px); transition: all 0.4s ease; display: flex; flex-direction: column; }
+        .nav-top-row { display: flex; justify-content: space-between; align-items: center; height: 80px; padding: 0 50px; width: 100%; position: relative; }
+        .logo-and-controls { position: absolute; right: 50px; display: flex; align-items: center; gap: 30px; height: 100%; }
+
+        @keyframes premiumFloat { 0% { transform: translateY(0px); filter: drop-shadow(0 0 0px rgba(252, 206, 13, 0)); } 50% { transform: translateY(-4px); filter: drop-shadow(0 10px 15px rgba(252, 206, 13, 0.6)); } 100% { transform: translateY(0px); filter: drop-shadow(0 0 0px rgba(252, 206, 13, 0)); } }
+        .logo-container { display: flex; align-items: center; height: 100%; }
+        .logo-container img { height: 50px; object-fit: contain; animation: premiumFloat 4s ease-in-out infinite; } 
+
+        .nav-controls { display: flex; gap: 8px; align-items: center; }
+        .action-btn { background: rgba(210, 180, 140, 0.05); border: 1px solid rgba(210, 180, 140, 0.3); color: var(--primary-sand); width: 28px; height: 28px; border-radius: 6px; font-size: 11px; font-weight: bold; display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
+        .action-btn:hover { background: var(--primary-sand); color: var(--dark-base); }
+        body.light-mode .action-btn { border-color: var(--primary-red); color: var(--primary-red); }
+        body.light-mode .action-btn:hover { background: var(--primary-red); color: var(--bg-main); }
+
+        @keyframes moveGradientLoop { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        .logo-extended-line { position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--primary-red), var(--warm-orange), var(--bright-yellow), var(--warm-orange), var(--primary-red)); background-size: 200% 100%; animation: moveGradientLoop 3s linear infinite; }
+
+        .nav-bottom-row { display: flex; justify-content: center; align-items: center; height: 55px; width: 100%; background: rgba(0, 0, 0, 0.1); }
+        .nav-menu-links { display: flex; list-style: none; gap: 50px; margin: 0; padding: 0; }
+        .nav-menu-links a { color: var(--text-color); text-decoration: none; font-size: 18px; font-weight: 600; position: relative; padding-bottom: 5px; letter-spacing: 1px; }
+        .nav-menu-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--bright-yellow); transition: width 0.3s ease; }
+        .nav-menu-links a:hover, .nav-menu-links a.active { color: var(--bright-yellow); }
+        .nav-menu-links a:hover::after, .nav-menu-links a.active::after { width: 100%; }
+
+        /* النوافذ العائمة */
+        .fixed-location { position: fixed; top: 20px; left: 20px; background: var(--bright-yellow); color: #111; padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 700; z-index: 99999; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(252, 206, 13, 0.3); }
+        .fixed-location i { color: var(--primary-red); font-size: 16px; }
+        .action-buttons { position: fixed; top: 65px; left: 20px; z-index: 99999; display: flex; gap: 8px; }
+        #discount-popup { position: fixed; left: 20px; top: 110px; background: var(--bright-yellow); color: #333; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; z-index: 99999; box-shadow: 0 10px 30px rgba(0,0,0,.25); font-weight: 700; font-size: 14px; }
+        #discount-popup button { border: none; background: none; font-size: 18px; cursor: none; color: #333; font-weight: bold; }
+
+        /* ==================================================
+           سكشن الحجز (Booking Section)
+           ================================================== */
+        .booking-page-wrapper { padding: 180px 10% 120px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        .booking-card {
+            background: var(--bg-card); border: 1px solid var(--border-line); border-radius: 24px;
+            padding: 50px; box-shadow: 0 25px 60px var(--shadow-color);
+            width: 100%; max-width: 1100px; display: grid; grid-template-columns: 2fr 1fr; gap: 50px;
+        }
+
+        /* تعديل التصميم للشاشات الصغيرة */
+        @media (max-width: 900px) { .booking-card { grid-template-columns: 1fr; } }
+
+        .booking-form-header h1 { color: var(--primary-red); font-size: 42px; margin-bottom: 10px; font-weight: 700; }
+        .booking-form-header p { color: var(--text-muted); font-size: 18px; margin-bottom: 30px; font-family: var(--font-secondary); }
+
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: right; }
+        body[dir="ltr"] .form-grid { text-align: left; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .full-width { grid-column: span 2; }
+        
+        .form-group label { color: var(--primary-sand); font-size: 16px; font-weight: bold; }
+        body.light-mode .form-group label { color: var(--text-main); }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border-line); padding: 15px; border-radius: 10px;
+            color: var(--text-color); font-family: var(--font-main); font-size: 16px; transition: all 0.3s;
+        }
+        body.light-mode .form-group input, body.light-mode .form-group select, body.light-mode .form-group textarea { background: #fff; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--bright-yellow); }
+
+        /* ملخص الحجز والدفع (صندوق جانبي) */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(156, 48, 47, 0.1), transparent);
+            border: 1px solid var(--primary-red); border-radius: 16px; padding: 30px;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        body.light-mode .summary-box { background: rgba(156, 48, 47, 0.05); }
+
+        .summary-title { color: var(--bright-yellow); font-size: 24px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid var(--border-line); padding-bottom: 10px;}
+        body.light-mode .summary-title { color: var(--primary-red); }
+        
+        .summary-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; color: var(--text-muted); }
+        .summary-item.discount { color: var(--primary-olive); font-weight: bold; }
+        .summary-total { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-line); font-size: 26px; font-weight: bold; color: var(--primary-sand); }
+        body.light-mode .summary-total { color: var(--text-main); }
+
+        .submit-booking-btn {
+            background: var(--primary-red); color: #fff; border: none; padding: 18px; border-radius: 10px;
+            font-size: 20px; font-weight: bold; width: 100%; transition: all 0.3s; margin-top: 20px; cursor: none;
+        }
+        .submit-booking-btn:hover { background: var(--bright-yellow); color: #111; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(252, 206, 13, 0.3); }
+
+        /* الفوتر */
+        .footer-section { padding: 80px 10% 30px; background: #050505; border-top: 1px solid var(--border-line); }
+        body.light-mode .footer-section { background: var(--bg-card); }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; margin-bottom: 50px; text-align: right; }
+        body[dir="ltr"] .footer-content { text-align: left; }
+        .footer-col { flex: 1; min-width: 250px; }
+        .footer-col h3 { color: var(--bright-yellow); font-size: 24px; margin-bottom: 25px; }
+        .footer-col p, .footer-col a { color: var(--text-color); font-family: var(--font-secondary); font-size: 18px; text-decoration: none; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .footer-col a:hover { color: var(--primary-red); }
+        .footer-col i { color: var(--primary-red); font-size: 20px; width: 25px; text-align: center; }
+        .footer-bottom { text-align: center; padding-top: 25px; border-top: 1px solid rgba(210,180,140,0.1); }
+        .footer-bottom p { color: var(--text-muted); font-size: 16px; letter-spacing: 1px; }
+
+        /* AI Chat */
+        .ai-chat-widget { position: fixed; bottom: 40px; left: 40px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-start; }
+        .ai-chat-button { width: 70px; height: 70px; border-radius: 50%; background: #0a0a0a; border: 2px solid var(--primary-red); box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; color: var(--primary-sand); font-size: 28px; cursor: none; }
+        body.light-mode .ai-chat-button { background: var(--bg-card); }
+        .ai-chat-button:hover { transform: scale(1.1); border-color: var(--bright-yellow); color: var(--bright-yellow); box-shadow: 0 10px 30px rgba(252, 206, 13, 0.4); }
+        .ai-chat-window { width: 340px; height: 450px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--primary-red); border-radius: 16px; margin-bottom: 15px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
+        .ai-chat-header { background: var(--primary-red); color: #fff; padding: 15px; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .ai-chat-header-info { display: flex; align-items: center; gap: 10px; }
+        .ai-chat-header-info i { font-size: 24px; color: var(--bright-yellow); }
+        .ai-chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-size: 15px; background: #141414;}
+        .msg-bot { background: rgba(210, 180, 140, 0.1); color: var(--primary-sand); padding: 10px 15px; border-radius: 12px; align-self: flex-start; max-width: 85%; border-right: 3px solid var(--primary-red); }
+        .msg-user { background: var(--primary-olive); color: #fff; padding: 10px 15px; border-radius: 12px; align-self: flex-end; max-width: 85%; }
+        .ai-chat-input-area { display: flex; border-top: 1px solid rgba(210, 180, 140, 0.2); background: rgba(10, 10, 10, 0.9); padding: 5px; }
+        .ai-chat-input-area input { flex: 1; background: transparent; border: none; padding: 12px 15px; color: var(--primary-sand); font-family: var(--font-main); font-size: 15px; outline: none; }
+        .ai-chat-send { background: transparent; border: none; color: var(--bright-yellow); padding: 0 15px; font-size: 20px; transition: transform 0.2s; cursor: none; }
+        .ai-chat-send:hover { transform: scale(1.1); }
+
+        /* الماوس */
+        .custom-cursor { width: 30px; height: 30px; border: 1px solid var(--primary-red); border-radius: 50%; position: fixed; transform: translate(-50%, -50%); pointer-events: none; z-index: 10000; transition: width 0.2s, height 0.2s; }
+        .custom-cursor-dot { width: 4px; height: 4px; background-color: var(--bright-yellow); border-radius: 50%; position: fixed; transform: translate(-50%, -50%); pointer-events: none; z-index: 10000; }
+        a:hover ~ .custom-cursor, button:hover ~ .custom-cursor, select:hover ~ .custom-cursor { width: 60px; height: 60px; background: rgba(156, 48, 47, 0.1); border-color: transparent; }
+    </style>
+</head>
+<body>
+
+    <div class="animated-bg"></div>
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-dot"></div>
+
+    <nav class="veo-navigation">
+        <div class="nav-top-row">
+            <div class="logo-and-controls">
+                <div class="logo-container">
+                    <img src="logo.png" alt="إرث">
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-bottom-row">
+            <ul class="nav-menu-links">
+                <li><a href="wg.1.html" data-ar="الرئيسية" data-en="Home">الرئيسية</a></li>
+                <li><a href="wg.2.html" data-ar="التجارب" data-en="Experiences">التجارب</a></li>
+                <li><a href="wg.3.html" data-ar="عمل المنصة" data-en="How it Works">عمل المنصة</a></li>
+                <li><a href="wg.4.html" data-ar="تذكار" data-en="Souvenirs">تذكار</a></li>
+                <li><a href="wg.5.html" data-ar="المشاريع المتخصصة" data-en="Custom Projects">المشاريع المتخصصة</a></li>
+                <li><a href="wg.6.html" class="active" data-ar="الحجز" data-en="Booking">الحجز</a></li>
+            </ul>
+        </div>
+        <div class="logo-extended-line"></div>
+    </nav>
+
+    <div class="fixed-location">
+        <i class="fa-solid fa-location-dot"></i>
+        <span data-ar="أم قيس" data-en="Umm Qais">أم قيس</span>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-btn" onclick="toggleLanguage()" id="lang-btn">EN</button>
+        <button class="action-btn" onclick="toggleTheme()" title="تبديل ليلي/نهاري">
+            <i class="fa-solid fa-sun" id="theme-icon"></i>
+        </button>
+    </div>
+
+    <div id="discount-popup">
+        <i class="fa-solid fa-tag"></i>
+        <span data-ar="خصم حصري 25% | التذكرة تبدأ من 5 د.أ فقط" data-en="25% OFF | Tickets start at 5 JOD">خصم حصري 25% | التذكرة تبدأ من 5 د.أ فقط</span>
+        <button onclick="document.getElementById('discount-popup').style.display='none'">✕</button>
+    </div>
+
+    <section class="booking-page-wrapper">
+        <div class="booking-card">
+            
+            <div class="booking-form-section">
+                <div class="booking-form-header">
+                    <h1 data-ar="احجز تذكرتك عبر الزمن" data-en="Book Your Ticket Through Time">احجز تذكرتك عبر الزمن</h1>
+                    <p data-ar="يرجى تعبئة البيانات أدناه لتأكيد موعد تجربتك الغامرة." data-en="Please fill out the details below to confirm your immersive experience.">يرجى تعبئة البيانات أدناه لتأكيد موعد تجربتك الغامرة.</p>
+                </div>
+
+                <form class="form-grid" onsubmit="event.preventDefault(); alert('تم تأكيد حجزك بنجاح! سنراك قريباً.');">
+                    <div class="form-group">
+                        <label data-ar="الاسم الكامل" data-en="Full Name">الاسم الكامل</label>
+                        <input type="text" placeholder="الاسم" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label data-ar="رقم الهاتف" data-en="Phone Number">رقم الهاتف</label>
+                        <input type="tel" placeholder="+962 7X XXX XXXX" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label data-ar="التجربة المطلوبة" data-en="Select Experience">التجربة المطلوبة</label>
+                        <select required>
+                            <option value="" disabled selected data-ar="اختر التجربة التي تود عيشها..." data-en="Select the experience you want to live...">اختر التجربة التي تود عيشها...</option>
+                            <option value="um-qais" data-ar="تجربة المدرج الروماني - أم قيس" data-en="Roman Theater - Umm Qais">تجربة المدرج الروماني - أم قيس</option>
+                            <option value="ajloun" data-ar="الترميم الرقمي - قلعة عجلون" data-en="Digital Restoration - Ajloun Castle">الترميم الرقمي - قلعة عجلون</option>
+                            <option value="petra" data-ar="أسرار الخزنة - البتراء" data-en="Treasury Secrets - Petra">أسرار الخزنة - البتراء</option>
+                            <option value="karak" data-ar="إضاءة الفراغات - قلعة الكرك" data-en="Lighting Spaces - Karak Castle">إضاءة الفراغات - قلعة الكرك</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-ar="تاريخ الحجز" data-en="Booking Date">تاريخ الحجز</label>
+                        <input type="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-ar="وقت الحجز" data-en="Booking Time">وقت الحجز</label>
+                        <input type="time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-ar="البريد الإلكتروني (اختياري)" data-en="Email (Optional)">البريد الإلكتروني (اختياري)</label>
+                        <input type="email" placeholder="example@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label data-ar="عدد التذاكر (الأشخاص)" data-en="Number of Tickets">عدد التذاكر (الأشخاص)</label>
+                        <input type="number" min="1" max="10" value="1" id="ticket-count" onchange="updateTotal()" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label data-ar="ملاحظات إضافية" data-en="Additional Notes">ملاحظات إضافية</label>
+                        <textarea rows="3" placeholder="أي متطلبات خاصة أو استفسارات..."></textarea>
+                    </div>
+
+                    <div class="full-width">
+                        <button type="submit" class="submit-booking-btn">
+                            <i class="fa-solid fa-check-circle" style="margin: 0 10px;"></i>
+                            <span data-ar="تأكيد الحجز والدفع" data-en="Confirm Booking & Pay">تأكيد الحجز والدفع</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="summary-section">
+                <div class="summary-box">
+                    <h3 class="summary-title" data-ar="ملخص الدفع" data-en="Payment Summary">ملخص الدفع</h3>
+                    
+                    <div style="flex-grow: 1;">
+                        <div class="summary-item">
+                            <span data-ar="سعر التذكرة الأساسي" data-en="Basic Ticket Price">سعر التذكرة الأساسي</span>
+                            <span>6.65 JOD</span>
+                        </div>
+                        <div class="summary-item discount">
+                            <span data-ar="الخصم المطبق (25%)" data-en="Applied Discount (25%)">الخصم المطبق (25%)</span>
+                            <span>-1.65 JOD</span>
+                        </div>
+                        <div class="summary-item">
+                            <span data-ar="السعر بعد الخصم" data-en="Price After Discount">السعر بعد الخصم</span>
+                            <span>5.00 JOD</span>
+                        </div>
+                        <div class="summary-item" style="margin-top: 20px;">
+                            <span data-ar="عدد التذاكر" data-en="Ticket Count">عدد التذاكر</span>
+                            <span id="display-count">x1</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-total">
+                        <span data-ar="الإجمالي المطلوب" data-en="Total Amount">الإجمالي المطلوب</span>
+                        <span id="total-price">5.00 JOD</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer-section">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3 data-ar="عن إرث" data-en="About Erth">عن إرث</h3>
+                <p data-ar="منصة تهدف الى احياء الارث الاردني ." data-en="A digital platform aiming to revive Jordanian architectural heritage.">منصة رقمية تهدف إلى إحياء التراث المعماري الأردني.</p>
+            </div>
+            <div class="footer-col">
+                <h3 data-ar="معلومات التواصل" data-en="Contact Info">معلومات التواصل</h3>
+                <p><i class="fa-solid fa-phone"></i> +962 773457893 </p>
+                <p><i class="fa-solid fa-envelope"></i> info@erth.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-ar="جميع الحقوق محفوظة لـ هبه الشرمان © 2026" data-en="All Rights Reserved to Heba Al-Sharman © 2026">جميع الحقوق محفوظة لـ هبه الشرمان © 2026</p>
+        </div>
+    </footer>
+
+    <div class="ai-chat-widget">
+        <div class="ai-chat-window" id="chatWindow">
+            <div class="ai-chat-header">
+                <div class="ai-chat-header-info">
+                    <i class="fa-solid fa-robot"></i>
+                    <span data-ar="مساعد إرث (نشمي الذكي)" data-en="Erth Assistant (Smart Nashmi)">مساعد إرث (نشمي الذكي)</span>
+                </div>
+                <i class="fa-solid fa-xmark" style="cursor:none;" onclick="toggleChat()"></i>
+            </div>
+            <div class="ai-chat-messages" id="chatMessages">
+                <div class="msg-bot" data-ar="يا هلا بيك! واجهتك أي مشكلة أثناء الحجز أو اختيار الموعد؟" data-en="Welcome! Any issues while booking or choosing your time?">يا هلا بيك! واجهتك أي مشكلة أثناء الحجز أو اختيار الموعد؟</div>
+            </div>
+            <div class="ai-chat-input-area">
+                <input type="text" id="chatInput" placeholder="اكتب سؤالك هنا..." onkeypress="handleChatKey(event)">
+                <button class="ai-chat-send" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button class="ai-chat-button" onclick="toggleChat()">
+            <i class="fa-solid fa-robot"></i>
+        </button>
+    </div>
+
+    <script>
+        // تحديث سعر التذاكر بناءً على العدد المدخل
+        function updateTotal() {
+            let count = document.getElementById('ticket-count').value;
+            if(count < 1) count = 1;
+            document.getElementById('display-count').innerText = "x" + count;
+            document.getElementById('total-price').innerText = (count * 5).toFixed(2) + " JOD";
+        }
+
+        // سكريبت تبديل الوضع (الليلي / النهاري)
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('theme-icon');
+            if(document.body.classList.contains('light-mode')) {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        }
+
+        // سكريبت تبديل اللغة
+        let currentLang = 'ar';
+        function toggleLanguage() {
+            const htmlTag = document.documentElement;
+            const langBtn = document.getElementById('lang-btn');
+            const translatableElements = document.querySelectorAll('[data-ar]');
+
+            if (currentLang === 'ar') {
+                currentLang = 'en';
+                htmlTag.setAttribute('dir', 'ltr'); 
+                htmlTag.setAttribute('lang', 'en');
+                langBtn.innerText = 'AR';
+                
+                translatableElements.forEach(el => { el.innerHTML = el.getAttribute('data-en'); });
+                document.getElementById('chatInput').placeholder = "Type your question here...";
+            } else {
+                currentLang = 'ar';
+                htmlTag.setAttribute('dir', 'rtl'); 
+                htmlTag.setAttribute('lang', 'ar');
+                langBtn.innerText = 'EN';
+                
+                translatableElements.forEach(el => { el.innerHTML = el.getAttribute('data-ar'); });
+                document.getElementById('chatInput').placeholder = "اكتب سؤالك هنا...";
+            }
+        }
+
+        // سكريبت الذكاء الاصطناعي
+        function toggleChat() {
+            const windowEl = document.getElementById('chatWindow');
+            windowEl.style.display = (windowEl.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const messagesContainer = document.getElementById('chatMessages');
+            if(input.value.trim() === "") return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg-user';
+            userMsg.innerText = input.value;
+            messagesContainer.appendChild(userMsg);
+
+            const userText = input.value;
+            input.value = "";
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg-bot';
+                let replyMsg = currentLang === 'ar' ? "أبشر، جاري مراجعة استفسارك بخصوص '" : "Sure, reviewing your inquiry regarding '";
+                botMsg.innerText = replyMsg + userText + "' وتأكيد تفاصيل الحجز.";
+                messagesContainer.appendChild(botMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 800);
+        }
+
+        function handleChatKey(event) {
+            if(event.key === 'Enter') sendChatMessage();
+        }
+
+        // حركة الماوس
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursor = document.querySelector('.custom-cursor');
+            const cursorDot = document.querySelector('.custom-cursor-dot');
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+                cursorDot.style.left = e.clientX + 'px'; cursorDot.style.top = e.clientY + 'px';
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
